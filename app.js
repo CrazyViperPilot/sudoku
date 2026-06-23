@@ -4,12 +4,52 @@ let currentSolution = [];
 let userBoard = [];
 let selectedCell = null;
 let currentDifficulty = 'easy';
+let toastTimer = null; // used to debounce/cancel pending toasts
 
 const boardEl = document.getElementById('board');
 const numpadEl = document.getElementById('numpad');
 const btnNewGame = document.getElementById('btnNewGame');
 const btnHint = document.getElementById('btnHint');
 const btnErase = document.getElementById('btnErase');
+
+// =============================================================
+// Toast / Love-Messages
+// =============================================================
+
+/**
+ * Displays a temporary Glassmorphism toast overlay at the bottom
+ * of the screen. Disappears automatically after 2 seconds.
+ * pointer-events: none so it never blocks gameplay.
+ * @param {string} message  - The text to display
+ * @param {number} [duration=2000] - Visible duration in ms
+ */
+function showToast(message, duration = 2000) {
+    // Cancel any in-flight toast to avoid stacking
+    if (toastTimer) {
+        clearTimeout(toastTimer);
+        const old = document.getElementById('love-toast');
+        if (old) old.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.id = 'love-toast';
+    toast.className = 'love-toast';
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+
+    // Trigger enter animation on the next frame
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => toast.classList.add('love-toast--visible'));
+    });
+
+    toastTimer = setTimeout(() => {
+        toast.classList.remove('love-toast--visible');
+        // Remove from DOM after CSS transition finishes (300 ms)
+        toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+        toastTimer = null;
+    }, duration);
+}
 
 function initGame() {
     createNumpad();
@@ -117,8 +157,46 @@ function fillNumber(num) {
         userBoard[r][c] = num;
         cellEl.textContent = num;
         cellEl.classList.remove('error');
-        checkWin();
+
+        // Check milestones before win (win overrides these toasts)
+        if (!checkWin()) {
+            const rowDone = checkRowComplete(r);
+            const boxDone = checkBoxComplete(r, c);
+            if (rowDone || boxDone) {
+                showToast(getRandomLoveMessage(window.currentLang));
+            }
+        }
     }
+}
+
+/**
+ * Returns true if every cell in the given row is correctly filled.
+ * @param {number} row
+ * @returns {boolean}
+ */
+function checkRowComplete(row) {
+    for (let c = 0; c < 9; c++) {
+        if (userBoard[row][c] !== currentSolution[row][c]) return false;
+    }
+    return true;
+}
+
+/**
+ * Returns true if the 3×3 box containing (row, col) is completely
+ * and correctly filled.
+ * @param {number} row
+ * @param {number} col
+ * @returns {boolean}
+ */
+function checkBoxComplete(row, col) {
+    const rStart = Math.floor(row / 3) * 3;
+    const cStart = Math.floor(col / 3) * 3;
+    for (let r = rStart; r < rStart + 3; r++) {
+        for (let c = cStart; c < cStart + 3; c++) {
+            if (userBoard[r][c] !== currentSolution[r][c]) return false;
+        }
+    }
+    return true;
 }
 
 function eraseCell() {
@@ -154,21 +232,28 @@ function handleKeyboard(e) {
     }
 }
 
+/**
+ * Checks if the board is fully and correctly solved.
+ * @returns {boolean} true if the puzzle is solved
+ */
 function checkWin() {
     for (let r = 0; r < 9; r++) {
         for (let c = 0; c < 9; c++) {
-            if (userBoard[r][c] !== currentSolution[r][c]) return;
+            if (userBoard[r][c] !== currentSolution[r][c]) return false;
         }
     }
-    
-    // Win animation
+
+    // Win animation on all cells
     document.querySelectorAll('.cell').forEach(cell => {
         cell.classList.add('complete-anim');
     });
-    
+
+    // Show win message as a beautiful toast (no blocking alert)
     setTimeout(() => {
-        alert(texts[currentLang].won);
-    }, 1000);
+        showToast(texts[window.currentLang].won, 4000);
+    }, 800);
+
+    return true;
 }
 
 document.addEventListener('DOMContentLoaded', initGame);

@@ -1,3 +1,54 @@
+// =============================================================
+// Love Messages – shown as Toast overlays on row/box/win events
+// =============================================================
+const loveMessages = {
+    pl: [
+        // Row complete
+        "Świetna robota, mój skarbie! 💛",
+        "Jesteś niesamowita! ✨",
+        "Pięknie to rozwiązałaś! 🌸",
+        "Mój anioł ma talent! 🌺",
+        "Niesamowite! Kocham Cię! 💕",
+        // Box complete
+        "Jeden kwadrat mniej – jesteś blisko! 🌼",
+        "Złota dziewczyna! 👑",
+        "Twój uśmiech jest piękniejszy niż złoto! 🌹",
+        "Mistrzini Sudoku! 💎",
+        // Extra
+        "Tak trzymaj, moja róża! 🥀",
+        "Każda liczba to serce dla Ciebie! ❤️",
+        "Jesteś moim szczęściem! 🍀"
+    ],
+    de: [
+        // Row complete
+        "Wunderschön gemacht, mein Schatz! 💛",
+        "Du bist einfach unglaublich! ✨",
+        "Perfekt gelöst! 🌸",
+        "Mein Engel hat Talent! 🌺",
+        "Fantastisch! Ich liebe dich! 💕",
+        // Box complete
+        "Ein Quadrat weniger – du bist so nah dran! 🌼",
+        "Mein goldenes Mädchen! 👑",
+        "Dein Lächeln ist schöner als Gold! 🌹",
+        "Sudoku-Meisterin! 💎",
+        // Extra
+        "Weiter so, meine Rose! 🥀",
+        "Jede Zahl ist ein Herz für dich! ❤️",
+        "Du bist mein Glück! 🍀"
+    ]
+};
+
+/**
+ * Returns a random love message in the current language.
+ * Falls back to 'pl' if language key is not found.
+ * @param {string} lang - Language code ('pl' or 'de')
+ * @returns {string}
+ */
+function getRandomLoveMessage(lang) {
+    const pool = loveMessages[lang] || loveMessages['pl'];
+    return pool[Math.floor(Math.random() * pool.length)];
+}
+
 class SudokuGenerator {
     constructor() {
         this.board = Array.from({ length: 9 }, () => Array(9).fill(0));

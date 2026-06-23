@@ -23,10 +23,10 @@ const texts = {
     }
 };
 
-let currentLang = 'pl';
+window.currentLang = 'pl';
 
 function setLanguage(lang) {
-    currentLang = lang;
+    window.currentLang = lang;
     document.documentElement.lang = lang;
     
     // Update texts
@@ -51,7 +51,7 @@ function setLanguage(lang) {
 }
 
 function toggleLanguage() {
-    const newLang = currentLang === 'pl' ? 'de' : 'pl';
+    const newLang = window.currentLang === 'pl' ? 'de' : 'pl';
     setLanguage(newLang);
     localStorage.setItem('sudokuLang', newLang);
 }
