@@ -6,8 +6,6 @@ let selectedCell = null;
 let currentDifficulty = 'easy';
 let toastTimer = null;
 let gameWon = false;
-let notesMode = false;
-let notesBoard = [];
 let undoStack = [];
 let timerInterval = null;
 let elapsedSeconds = 0;
@@ -23,8 +21,7 @@ function saveGameState() {
         currentSolution,
         currentDifficulty,
         elapsedSeconds,
-        gameWon,
-        notesBoard: notesBoard.map(row => row.map(set => [...set]))
+        gameWon
     };
     localStorage.setItem('sudokuGameState', JSON.stringify(state));
 }
@@ -41,19 +38,10 @@ function loadGameState() {
         currentDifficulty = state.currentDifficulty || 'easy';
         elapsedSeconds = state.elapsedSeconds || 0;
         gameWon = state.gameWon || false;
-        notesBoard = state.notesBoard
-            ? state.notesBoard.map(row => row.map(arr => new Set(arr)))
-            : createEmptyNotesBoard();
         return true;
     } catch {
         return false;
     }
-}
-
-function createEmptyNotesBoard() {
-    return Array.from({ length: 9 }, () =>
-        Array.from({ length: 9 }, () => new Set())
-    );
 }
 
 // =============================================================
@@ -170,7 +158,6 @@ const btnNewGame = document.getElementById('btnNewGame');
 const btnHint = document.getElementById('btnHint');
 const btnErase = document.getElementById('btnErase');
 const btnUndo = document.getElementById('btnUndo');
-// const btnNotes = document.getElementById('btnNotes');
 
 // =============================================================
 // Init
@@ -195,7 +182,6 @@ function initGame() {
     btnErase.addEventListener('click', eraseCell);
     btnHint.addEventListener('click', giveHint);
     btnUndo.addEventListener('click', undoLastMove);
-    // btnNotes.addEventListener('click', toggleNotesMode);
 
     // Confirmation modal buttons
     document
@@ -256,12 +242,8 @@ function startNewGame() {
     userBoard = puzzle.map((row) => [...row]);
     selectedCell = null;
     gameWon = false;
-    notesMode = false;
-    notesBoard = createEmptyNotesBoard();
     undoStack = [];
     elapsedSeconds = 0;
-
-    // btnNotes.classList.remove('active');
 
     renderBoard();
     updateTimerDisplay();
@@ -295,28 +277,9 @@ function renderBoard() {
     updateHighlights();
 }
 
-/**
- * Renders the content of a single cell: either a number or a notes grid.
- */
 function renderCellContent(cellEl, r, c) {
-    cellEl.innerHTML = '';
     const val = userBoard[r][c];
-
-    if (val !== 0) {
-        cellEl.textContent = val;
-    } else if (notesBoard[r] && notesBoard[r][c] && notesBoard[r][c].size > 0) {
-        const grid = document.createElement('div');
-        grid.className = 'notes-grid';
-        for (let n = 1; n <= 9; n++) {
-            const span = document.createElement('span');
-            span.className = 'note';
-            if (notesBoard[r][c].has(n)) {
-                span.textContent = n;
-            }
-            grid.appendChild(span);
-        }
-        cellEl.appendChild(grid);
-    }
+    cellEl.textContent = val !== 0 ? val : '';
 }
 
 // =============================================================
@@ -401,71 +364,7 @@ function updateNumpadIndicators() {
     });
 }
 
-// =============================================================
-// Notes Mode
-// =============================================================
 
-function toggleNotesMode() {
-    notesMode = !notesMode;
-    btnNotes.classList.toggle('active', notesMode);
-}
-
-function toggleNote(r, c, num) {
-    if (notesBoard[r][c].has(num)) {
-        notesBoard[r][c].delete(num);
-    } else {
-        notesBoard[r][c].add(num);
-    }
-    const cellEl = document.querySelector(
-        `.cell[data-r="${r}"][data-c="${c}"]`
-    );
-    renderCellContent(cellEl, r, c);
-    saveGameState();
-}
-
-/**
- * After placing a number, remove that digit from the notes of all
- * cells in the same row, column, and 3×3 box.
- */
-function eliminateNoteFromPeers(r, c, num) {
-    for (let cc = 0; cc < 9; cc++) notesBoard[r][cc].delete(num);
-    for (let rr = 0; rr < 9; rr++) notesBoard[rr][c].delete(num);
-    const rStart = Math.floor(r / 3) * 3;
-    const cStart = Math.floor(c / 3) * 3;
-    for (let rr = rStart; rr < rStart + 3; rr++) {
-        for (let cc = cStart; cc < cStart + 3; cc++) {
-            notesBoard[rr][cc].delete(num);
-        }
-    }
-}
-
-/**
- * Re-render notes display for all peer cells (same row, column, box)
- * after a digit was eliminated from their notes.
- */
-function rerenderPeerNotes(r, c) {
-    const affected = new Set();
-    for (let i = 0; i < 9; i++) {
-        affected.add(`${r},${i}`);
-        affected.add(`${i},${c}`);
-    }
-    const rStart = Math.floor(r / 3) * 3;
-    const cStart = Math.floor(c / 3) * 3;
-    for (let rr = rStart; rr < rStart + 3; rr++) {
-        for (let cc = cStart; cc < cStart + 3; cc++) {
-            affected.add(`${rr},${cc}`);
-        }
-    }
-    affected.forEach((key) => {
-        const [pr, pc] = key.split(',').map(Number);
-        if (userBoard[pr][pc] === 0) {
-            const cellEl = document.querySelector(
-                `.cell[data-r="${pr}"][data-c="${pc}"]`
-            );
-            if (cellEl) renderCellContent(cellEl, pr, pc);
-        }
-    });
-}
 
 // =============================================================
 // Fill / Erase / Hint / Undo
@@ -475,13 +374,6 @@ function fillNumber(num) {
     if (gameWon || !selectedCell) return;
     const { r, c } = selectedCell;
     if (currentPuzzle[r][c] !== 0) return;
-
-    // Notes mode – toggle candidate instead of placing value
-    if (notesMode) {
-        if (userBoard[r][c] !== 0) return;
-        toggleNote(r, c, num);
-        return;
-    }
 
     const cellEl = document.querySelector(
         `.cell[data-r="${r}"][data-c="${c}"]`
@@ -495,16 +387,8 @@ function fillNumber(num) {
     }
 
     // Correct number – push undo entry
-    undoStack.push({
-        r,
-        c,
-        previousValue: userBoard[r][c],
-        previousNotes: new Set(notesBoard[r][c]),
-    });
-
+    undoStack.push({ r, c, previousValue: userBoard[r][c] });
     userBoard[r][c] = num;
-    eliminateNoteFromPeers(r, c, num);
-    notesBoard[r][c].clear();
 
     renderCellContent(cellEl, r, c);
 
@@ -518,7 +402,6 @@ function fillNumber(num) {
 
     updateHighlights();
     updateNumpadIndicators();
-    rerenderPeerNotes(r, c);
     saveGameState();
 
     // Check milestones before win (win overrides these toasts)
@@ -569,33 +452,17 @@ function checkBoxComplete(row, col) {
 
 function eraseCell() {
     if (gameWon) return;
-    if (!selectedCell) {
-        shakeButton(btnErase);
-        return;
-    }
+    if (!selectedCell) { shakeButton(btnErase); return; }
     const { r, c } = selectedCell;
-    if (currentPuzzle[r][c] !== 0) {
-        shakeButton(btnErase);
-        return;
-    }
-    if (userBoard[r][c] === 0 && notesBoard[r][c].size === 0) {
+    if (currentPuzzle[r][c] !== 0 || userBoard[r][c] === 0) {
         shakeButton(btnErase);
         return;
     }
 
-    // Push undo entry
-    undoStack.push({
-        r,
-        c,
-        previousValue: userBoard[r][c],
-        previousNotes: new Set(notesBoard[r][c]),
-    });
-
+    undoStack.push({ r, c, previousValue: userBoard[r][c] });
     userBoard[r][c] = 0;
-    notesBoard[r][c].clear();
-    const cellEl = document.querySelector(
-        `.cell[data-r="${r}"][data-c="${c}"]`
-    );
+
+    const cellEl = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
     renderCellContent(cellEl, r, c);
     updateHighlights();
     updateNumpadIndicators();
@@ -614,12 +481,7 @@ function giveHint() {
         shakeButton(btnHint);
         return;
     }
-
-    // Temporarily exit notes mode so the hint places a real value
-    const wasNotesMode = notesMode;
-    notesMode = false;
     fillNumber(currentSolution[r][c]);
-    notesMode = wasNotesMode;
 }
 
 function undoLastMove() {
@@ -628,13 +490,10 @@ function undoLastMove() {
         return;
     }
 
-    const { r, c, previousValue, previousNotes } = undoStack.pop();
+    const { r, c, previousValue } = undoStack.pop();
     userBoard[r][c] = previousValue;
-    notesBoard[r][c] = previousNotes;
 
-    const cellEl = document.querySelector(
-        `.cell[data-r="${r}"][data-c="${c}"]`
-    );
+    const cellEl = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
     renderCellContent(cellEl, r, c);
     updateHighlights();
     updateNumpadIndicators();

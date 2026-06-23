@@ -23,18 +23,18 @@ const loveMessages = {
         // Row complete
         "Wunderschön gemacht, mein Schatz! 💛",
         "Du bist einfach unglaublich! ✨",
-        "Perfekt gelöst! Ich liebbe deine Entschlossenheit 🌸",
+        "Perfekt gelöst! Ich liebe deine Entschlossenheit 🌸",
         "Mein Engel hat Talent! 🌺",
         "Fantastisch! Ich liebe deine grünen Augen! 💕",
         // Box complete
         "Ein Quadrat weniger – hoffentlich kommst du gleich zum Kuscheln! 🌼",
-        "Du bist die schönse Frau der Welt! 👑",
+        "Du bist die schönste Frau der Welt! 👑",
         "Dein Lächeln ist schöner als alles Gold und Edelsteine! 🌹",
         "Sudoku-Meisterin! 💎",
         // Extra
         "Weiter so, meine Rose! 🥀",
         "Ich liebe dich mehr als es Zahlen gibt! ❤️",
-        "Du bist mein grösstes Glück! 🍀"
+        "Du bist mein größtes Glück! 🍀"
     ]
 };
 

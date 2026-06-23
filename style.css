@@ -188,7 +188,7 @@ h1 {
     background: var(--cell-selected);
     box-shadow: inset 0 0 10px rgba(229, 178, 51, 0.5);
     font-weight: bold;
-    color: #E0115F !important;
+    color: #E0115F;
 }
 
 .cell.highlight {
@@ -199,7 +199,7 @@ h1 {
     background: rgba(229, 178, 51, 0.25);
     box-shadow: inset 0 0 8px rgba(229, 178, 51, 0.3);
     font-weight: bold;
-    color: #E0115F !important;
+    color: #E0115F;
 }
 
 .cell.error {
@@ -249,11 +249,6 @@ h1 {
     font-size: 0.85rem;
 }
 
-.secondary-controls .notes-btn.active {
-    background: linear-gradient(135deg, var(--gold-light), var(--gold-main));
-    box-shadow: 0 0 15px rgba(229, 178, 51, 0.5);
-}
-
 .numpad-container {
     display: flex;
     justify-content: center;
@@ -262,10 +257,9 @@ h1 {
 
 .numpad {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 6px;
     width: 100%;
-    max-width: 280px;
 }
 
 .num-btn {
@@ -274,7 +268,7 @@ h1 {
     background: rgba(20, 28, 20, 0.6);
     border: 2px solid var(--gold-main);
     color: var(--gold-light);
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-family: 'Outfit', sans-serif;
     cursor: pointer;
     display: flex;
@@ -372,29 +366,6 @@ h1 {
     100% { transform: translateX(0); }
 }
 
-/* Notes grid inside cells */
-.notes-grid {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    padding: 1px;
-}
-
-.note {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.55rem;
-    color: var(--text-gold);
-    opacity: 0.85;
-    line-height: 1;
-    pointer-events: none;
-}
 
 /* Confirmation Modal */
 .confirm-modal {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sudoku-glamour-v2';
+const CACHE_NAME = 'sudoku-glamour-v3';
 const urlsToCache = [
   '/',
   '/index.html',
