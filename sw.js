@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sudoku-glamour-v1';
+const CACHE_NAME = 'sudoku-glamour-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -22,6 +22,20 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Network-first for navigation requests so HTML updates are picked up
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+  // Cache-first for other assets
   event.respondWith(
     caches.match(event.request)
       .then(response => {

@@ -4,22 +4,34 @@ const texts = {
         newGame: "Nowa gra",
         hint: "Podpowiedź",
         erase: "Usuń",
+        undo: "Cofnij",
+        notes: "Notatki",
         easy: "Łatwy",
         medium: "Średni",
         hard: "Trudny",
         won: "Gratulacje! Rozwiązałaś Sudoku!",
-        langToggle: "PL / DE"
+        langToggle: "PL / DE",
+        confirmNewGame: "Stracisz postęp. Kontynuować?",
+        yes: "Tak",
+        no: "Nie",
+        selectEmpty: "Wybierz puste pole"
     },
     de: {
         title: "Sudoku",
         newGame: "Neues Spiel",
         hint: "Tipp",
         erase: "Löschen",
+        undo: "Rückgängig",
+        notes: "Notizen",
         easy: "Einfach",
         medium: "Mittel",
         hard: "Schwer",
         won: "Herzlichen Glückwunsch! Du hast das Sudoku gelöst!",
-        langToggle: "DE / PL"
+        langToggle: "DE / PL",
+        confirmNewGame: "Fortschritt geht verloren. Fortfahren?",
+        yes: "Ja",
+        no: "Nein",
+        selectEmpty: "Wähle ein leeres Feld"
     }
 };
 
@@ -36,10 +48,15 @@ function setLanguage(lang) {
         'btnNewGame': texts[lang].newGame,
         'btnHint': texts[lang].hint,
         'btnErase': texts[lang].erase,
+        'btnUndo': texts[lang].undo,
+        'btnNotes': texts[lang].notes,
         'btnEasy': texts[lang].easy,
         'btnMedium': texts[lang].medium,
         'btnHard': texts[lang].hard,
-        'langToggle': texts[lang].langToggle
+        'langToggle': texts[lang].langToggle,
+        'confirmText': texts[lang].confirmNewGame,
+        'confirmYes': texts[lang].yes,
+        'confirmNo': texts[lang].no
     };
 
     for (let id in elements) {

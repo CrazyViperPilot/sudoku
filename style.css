@@ -29,18 +29,18 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Prevent scrolling, app-like feel */
+    overflow-y: auto;
     position: relative;
 }
 
 .glitter-bg {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: -1;
-    background-image: url('background.png'); /* We will generate this */
+    background-image: url('background.png');
     background-size: cover;
     background-position: center;
     opacity: 0.4;
@@ -73,6 +73,7 @@ body {
     width: 100%;
     max-width: 500px;
     height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -97,6 +98,20 @@ h1 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     filter: drop-shadow(0px 2px 10px rgba(229, 178, 51, 0.4));
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.timer {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    color: var(--text-gold);
+    letter-spacing: 2px;
+    opacity: 0.8;
 }
 
 .gold-btn {
@@ -127,6 +142,7 @@ h1 {
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
+    min-height: 0;
 }
 
 .sudoku-board {
@@ -143,6 +159,7 @@ h1 {
 }
 
 .cell {
+    position: relative;
     border: 1px solid var(--cell-border);
     background: var(--cell-bg);
     display: flex;
@@ -170,15 +187,28 @@ h1 {
 .cell.selected {
     background: var(--cell-selected);
     box-shadow: inset 0 0 10px rgba(229, 178, 51, 0.5);
+    font-weight: bold;
+    color: #E0115F !important;
 }
 
 .cell.highlight {
     background: var(--cell-highlight);
 }
 
+.cell.same-number {
+    background: rgba(229, 178, 51, 0.25);
+    box-shadow: inset 0 0 8px rgba(229, 178, 51, 0.3);
+    font-weight: bold;
+    color: #E0115F !important;
+}
+
 .cell.error {
     color: var(--error-red);
     animation: shake 0.4s;
+}
+
+.cell.pop-in {
+    animation: popIn 0.2s ease-out;
 }
 
 @keyframes shake {
@@ -189,10 +219,15 @@ h1 {
     100% { transform: translateX(0); }
 }
 
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
 .controls-row {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     gap: 10px;
 }
 
@@ -200,6 +235,23 @@ h1 {
     flex: 1;
     padding: 12px 0;
     font-size: 0.9rem;
+}
+
+.secondary-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.secondary-controls .gold-btn {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+}
+
+.secondary-controls .notes-btn.active {
+    background: linear-gradient(135deg, var(--gold-light), var(--gold-main));
+    box-shadow: 0 0 15px rgba(229, 178, 51, 0.5);
 }
 
 .numpad-container {
@@ -210,9 +262,10 @@ h1 {
 
 .numpad {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     width: 100%;
+    max-width: 280px;
 }
 
 .num-btn {
@@ -235,6 +288,12 @@ h1 {
     transform: scale(0.9);
     background: var(--gold-main);
     color: #000;
+}
+
+.num-btn.completed {
+    opacity: 0.3;
+    pointer-events: none;
+    border-color: rgba(229, 178, 51, 0.2);
 }
 
 .difficulty-selector {
@@ -300,3 +359,97 @@ h1 {
     opacity: 1;
 }
 
+/* Button shake feedback */
+.btn-shake {
+    animation: btnShake 0.4s ease;
+}
+
+@keyframes btnShake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
+
+/* Notes grid inside cells */
+.notes-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    padding: 1px;
+}
+
+.note {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.55rem;
+    color: var(--text-gold);
+    opacity: 0.85;
+    line-height: 1;
+    pointer-events: none;
+}
+
+/* Confirmation Modal */
+.confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirm-modal.hidden {
+    display: none;
+}
+
+.confirm-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+}
+
+.confirm-content {
+    position: relative;
+    background: rgba(15, 22, 16, 0.9);
+    border: 1px solid rgba(229, 178, 51, 0.4);
+    border-radius: 16px;
+    padding: 30px 40px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(229, 178, 51, 0.1);
+    backdrop-filter: blur(15px);
+    max-width: 320px;
+}
+
+.confirm-content p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    color: var(--text-gold);
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.confirm-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.confirm-buttons .gold-btn {
+    min-width: 80px;
+    padding: 10px 24px;
+}
