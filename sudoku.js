@@ -158,7 +158,6 @@ class SudokuGenerator {
             let cellId = this.randomGenerator(81) - 1;
             let i = Math.floor(cellId / 9);
             let j = cellId % 9;
-            if (j !== 0) j = j - 1;
 
             if (puzzle[i][j] !== 0) {
                 countToRm--;

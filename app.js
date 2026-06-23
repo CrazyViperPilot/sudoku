@@ -6,6 +6,36 @@ let selectedCell = null;
 let currentDifficulty = 'easy';
 let toastTimer = null; // used to debounce/cancel pending toasts
 
+// =============================================================
+// Game State Persistence
+// =============================================================
+
+function saveGameState() {
+    const state = {
+        userBoard,
+        currentPuzzle,
+        currentSolution,
+        currentDifficulty
+    };
+    localStorage.setItem('sudokuGameState', JSON.stringify(state));
+}
+
+function loadGameState() {
+    const raw = localStorage.getItem('sudokuGameState');
+    if (!raw) return false;
+    try {
+        const state = JSON.parse(raw);
+        if (!state.userBoard || !state.currentPuzzle || !state.currentSolution) return false;
+        userBoard = state.userBoard;
+        currentPuzzle = state.currentPuzzle;
+        currentSolution = state.currentSolution;
+        currentDifficulty = state.currentDifficulty || 'easy';
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 const boardEl = document.getElementById('board');
 const numpadEl = document.getElementById('numpad');
 const btnNewGame = document.getElementById('btnNewGame');
@@ -71,7 +101,16 @@ function initGame() {
     // Keyboard support
     document.addEventListener('keydown', handleKeyboard);
 
-    startNewGame();
+    // Restore saved game or start fresh
+    if (loadGameState()) {
+        // Sync difficulty selector with restored state
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+        const activeBtn = document.querySelector(`.diff-btn[data-level="${currentDifficulty}"]`);
+        if (activeBtn) activeBtn.classList.add('active');
+        renderBoard();
+    } else {
+        startNewGame();
+    }
 }
 
 function startNewGame() {
@@ -82,6 +121,7 @@ function startNewGame() {
     selectedCell = null;
     
     renderBoard();
+    saveGameState();
 }
 
 function renderBoard() {
@@ -156,6 +196,7 @@ function fillNumber(num) {
     } else {
         userBoard[r][c] = num;
         cellEl.textContent = num;
+        saveGameState();
         cellEl.classList.remove('error');
 
         // Check milestones before win (win overrides these toasts)
@@ -207,6 +248,7 @@ function eraseCell() {
     userBoard[r][c] = 0;
     const cellEl = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
     cellEl.textContent = '';
+    saveGameState();
 }
 
 function giveHint() {
