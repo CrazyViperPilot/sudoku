@@ -4,37 +4,37 @@
 const loveMessages = {
     pl: [
         // Row complete
-        "Świetna robota, mój skarbie! 💛",
-        "Jesteś niesamowita! ✨",
-        "Pięknie to rozwiązałaś! 🌸",
-        "Mój anioł ma talent! 🌺",
-        "Niesamowite! Kocham Cię! 💕",
-        // Box complete
-        "Jeden kwadrat mniej – jesteś blisko! 🌼",
-        "Złota dziewczyna! 👑",
-        "Twój uśmiech jest piękniejszy niż złoto! 🌹",
-        "Mistrzini Sudoku! 💎",
-        // Extra
-        "Tak trzymaj, moja róża! 🥀",
-        "Każda liczba to serce dla Ciebie! ❤️",
-        "Jesteś moim szczęściem! 🍀"
+    "Wspaniale Ci to wyszło, mój skarbie! 💛",
+    "Jesteś po prostu niesamowita! ✨",
+    "Perfekcyjnie rozwiązane! Uwielbiam Twoją determinację 🌸",
+    "Mój anioł ma prawdziwy talent! 🌺",
+    "Fantastycznie! Kocham Twoje zielone oczy! 💕",
+    // Box complete
+    "Jeden kwadrat mniej – mam nadzieję, że zaraz przytulisz się do mnie! 🌼",
+    "Jesteś najpiękniejszą kobietą na świecie! 👑",
+    "Twój uśmiech jest piękniejszy niż całe złoto i diamenty! 🌹",
+    "Mistrzyni Sudoku! 💎",
+    // Extra
+    "Tak trzymaj, moja różo! 🥀",
+    "Kocham Cię bardziej niż jest liczb na świecie! ❤️",
+    "Jesteś moim największym szczęściem! 🍀"
     ],
     de: [
         // Row complete
         "Wunderschön gemacht, mein Schatz! 💛",
         "Du bist einfach unglaublich! ✨",
-        "Perfekt gelöst! 🌸",
+        "Perfekt gelöst! Ich liebbe deine Entschlossenheit 🌸",
         "Mein Engel hat Talent! 🌺",
-        "Fantastisch! Ich liebe dich! 💕",
+        "Fantastisch! Ich liebe deine grünen Augen! 💕",
         // Box complete
-        "Ein Quadrat weniger – du bist so nah dran! 🌼",
-        "Mein goldenes Mädchen! 👑",
-        "Dein Lächeln ist schöner als Gold! 🌹",
+        "Ein Quadrat weniger – hoffentlich kommst du gleich zum Kuscheln! 🌼",
+        "Du bist die schönse Frau der Welt! 👑",
+        "Dein Lächeln ist schöner als alles Gold und Edelsteine! 🌹",
         "Sudoku-Meisterin! 💎",
         // Extra
         "Weiter so, meine Rose! 🥀",
-        "Jede Zahl ist ein Herz für dich! ❤️",
-        "Du bist mein Glück! 🍀"
+        "Ich liebe dich mehr als es Zahlen gibt! ❤️",
+        "Du bist mein grösstes Glück! 🍀"
     ]
 };
 
